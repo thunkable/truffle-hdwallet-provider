@@ -7,6 +7,7 @@ const FiltersSubprovider = require('web3-provider-engine/subproviders/filters.js
 const NonceSubProvider = require('web3-provider-engine/subproviders/nonce-tracker.js');
 const HookedSubprovider = require('web3-provider-engine/subproviders/hooked-wallet.js');
 const ProviderSubprovider = require("web3-provider-engine/subproviders/provider.js");
+const WebSocketSubprovider = require("web3-provider-engine/subproviders/websocket.js");
 const Web3 = require("web3");
 const Transaction = require('ethereumjs-tx');
 const ethUtil = require('ethereumjs-util');
@@ -111,6 +112,8 @@ function HDWalletProvider(
         this.engine.emit('data', err, notification)
       })
       this.engine.addProvider(wsSubprovider);
+      
+      Web3.providers.WebsocketProvider.prototype.sendAsync = Web3.providers.WebsocketProvider.prototype.send;
       this.engine.addProvider(new ProviderSubprovider(new Web3.providers.WebsocketProvider(provider)))
     } else {
       this.engine.addProvider(new ProviderSubprovider(new Web3.providers.HttpProvider(provider)));
