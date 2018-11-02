@@ -24,7 +24,8 @@ function HDWalletProvider(
   address_index=0,
   num_addresses=1,
   shareNonce=true,
-  wallet_hdpath="m/44'/60'/0'/0/"
+  wallet_hdpath="m/44'/60'/0'/0/",
+  debug=false
 ) {
 
   if (mnemonic && mnemonic.indexOf(' ') === -1 || Array.isArray(mnemonic)) {
@@ -104,7 +105,16 @@ function HDWalletProvider(
 
   this.engine.addProvider(new FiltersSubprovider());
   if (typeof provider === 'string') {
-    this.engine.addProvider(new ProviderSubprovider(new Web3.providers.HttpProvider(provider)));
+    if (provider.startsWith('ws')) {
+      const wsSubprovider = new WebSocketSubprovider({rpcUrl: provider, debug});
+      wsSubprovider.on('data', (err, notification) => {
+        this.engine.emit('data', err, notification)
+      })
+      this.engine.addProvider(wsSubprovider);
+      this.engine.addProvider(new ProviderSubprovider(new Web3.providers.WebsocketProvider(provider)))
+    } else {
+      this.engine.addProvider(new ProviderSubprovider(new Web3.providers.HttpProvider(provider)));
+    }
   } else {
     this.engine.addProvider(new ProviderSubprovider(provider));
   }
@@ -117,6 +127,10 @@ HDWalletProvider.prototype.sendAsync = function() {
 
 HDWalletProvider.prototype.send = function() {
   return this.engine.send.apply(this.engine, arguments);
+};
+
+HDWalletProvider.prototype.on = function() {
+  return this.engine.on.apply(this.engine, arguments);
 };
 
 // returns the address of the given address_index, first checking the cache
