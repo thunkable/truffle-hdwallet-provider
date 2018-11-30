@@ -108,9 +108,12 @@ function HDWalletProvider(
   if (typeof provider === 'string') {
     if (provider.startsWith('ws')) {
       const wsSubprovider = new WebSocketSubprovider({rpcUrl: provider, debug});
-      wsSubprovider.on('data', (err, notification) => {
-        this.engine.emit('data', err, notification)
-      })
+      if (!this.subscribedToEvents) {
+        this.subscribedToEvents = true;
+        wsSubprovider.on('data', (err, notification) => {
+          this.engine.emit('data', err, notification)
+        })
+      }
       this.engine.addProvider(wsSubprovider);
       
       Web3.providers.WebsocketProvider.prototype.sendAsync = Web3.providers.WebsocketProvider.prototype.send;
