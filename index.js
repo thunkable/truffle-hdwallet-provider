@@ -8,7 +8,7 @@ const NonceSubProvider = require('web3-provider-engine/dist/es5/subproviders/non
 const HookedSubprovider = require('web3-provider-engine/dist/es5/subproviders/hooked-wallet.js');
 const ProviderSubprovider = require("web3-provider-engine/dist/es5/subproviders/provider.js");
 const WebSocketSubprovider = require("web3-provider-engine/dist/es5/subproviders/websocket.js");
-const Web3 = require("web3");
+// const Web3 = require("web3");
 const Transaction = require('ethereumjs-tx');
 const ethUtil = require('ethereumjs-util');
 
@@ -26,7 +26,8 @@ function HDWalletProvider(
   num_addresses=1,
   shareNonce=true,
   wallet_hdpath="m/44'/60'/0'/0/",
-  debug=false
+  debug=false,
+  Web3
 ) {
 
   if (mnemonic && mnemonic.indexOf(' ') === -1 || Array.isArray(mnemonic)) {
