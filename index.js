@@ -22,12 +22,12 @@ const singletonNonceSubProvider = new NonceSubProvider();
 function HDWalletProvider(
   mnemonic,
   provider,
+  Web3,
   address_index=0,
   num_addresses=1,
   shareNonce=true,
   wallet_hdpath="m/44'/60'/0'/0/",
-  debug=false,
-  Web3
+  debug=false
 ) {
 
   if (mnemonic && mnemonic.indexOf(' ') === -1 || Array.isArray(mnemonic)) {
